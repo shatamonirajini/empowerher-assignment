@@ -24,4 +24,3 @@ const students = [
   { name: "Olivia", marks: 82 }
 ];
 console.log(processStudents(students).join(" ,"));
-
