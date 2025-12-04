@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Page</title>
+<style>
+    .card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        width: 220px;
+        border-radius: 6px;
+        box-shadow: 0 0 5px gray;
+        text-align: center;
+    }
+    #book-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+    img {
+        width: 150px;
+    }
+</style>
+</head>
+<body>
+<h1>BOOK MANAGEMENT APP</h1>
+
+<button onclick="goHome()">Back to Home</button>
+
+<h3>Add Book</h3>
+<div id="form-container">
+    <input type="text" id="title" placeholder="Book Title"><br><br>
+    <input type="text" id="author" placeholder="Author Name"><br><br>
+    <select id="category">
+        <option value="">Select Category</option>
+        <option value="fiction">Fiction</option>
+        <option value="comedy">Comedy</option>
+        <option value="technical">Technical</option>
+    </select><br><br>
+    <button onclick="addBook()">Add Book</button>
+</div>
+
+<br>
+<button onclick="sortAZ()">Sort A → Z</button>
+<button onclick="sortZA()">Sort Z → A</button>
+
+<select id="filter" onchange="filterBook()">
+    <option value="all">All</option>
+    <option value="fiction">Fiction</option>
+    <option value="comedy">Comedy</option>
+    <option value="technical">Technical</option>
+</select>
+
+<div id="book-container"></div>
+
+<script>
+let books = [];
+const IMAGE_URL = "https://m.media-amazon.com/images/I/71ZB18P3inL._SY522_.jpg";
+
+function goHome() {
+    window.location.href = "index.html";
+}
+
+function addBook() {
+    let title = document.getElementById("title").value;
+    let author = document.getElementById("author").value;
+    let category = document.getElementById("category").value;
+
+    if (!title || !author || !category) {
+        alert("Please fill all fields");
+        return;
+    }
+
+    let bookObj = { title, author, category, imageUrl: IMAGE_URL };
+    books.push(bookObj);
+    renderBooks(books);
+
+    document.getElementById("title").value = "";
+    document.getElementById("author").value = "";
+    document.getElementById("category").value = "";
+}
+
+function renderBooks(bookList) {
+    let container = document.getElementById("book-container");
+    container.innerHTML = "";
+
+    bookList.forEach((book, index) => {
+        let card = document.createElement("div");
+        card.className = "card";
+
+        let img = document.createElement("img");
+        img.src = book.imageUrl;
+
+        let title = document.createElement("h3");
+        title.textContent = book.title;
+
+        let author = document.createElement("p");
+        author.textContent = "Author: " + book.author;
+
+        let category = document.createElement("p");
+        category.textContent = "Category: " + book.category;
+
+        let deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.onclick = function () { deleteBook(index); };
+
+        card.appendChild(img);
+        card.appendChild(title);
+        card.appendChild(author);
+        card.appendChild(category);
+        card.appendChild(deleteBtn);
+
+        container.appendChild(card);
+    });
+}
+
+function deleteBook(index) {
+    books.splice(index, 1);
+    renderBooks(books);
+}
+
+function sortAZ() {
+    books.sort((a, b) => a.title.localeCompare(b.title));
+    renderBooks(books);
+}
+
+function sortZA() {
+    books.sort((a, b) => b.title.localeCompare(a.title));
+    renderBooks(books);
+}
+
+function filterBook() {
+    let value = document.getElementById("filter").value;
+    if (value === "all") {
+        renderBooks(books);
+        return;
+    }
+    let filtered = books.filter(book => book.category === value);
+    renderBooks(filtered);
+}
+</script>
+</body>
+</html>
